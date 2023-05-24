@@ -27,7 +27,7 @@ ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor* parentNode)
     : GenericEditor(parentNode)
 {
 
-    desiredWidth = 320;
+    desiredWidth = 335;
 
     //DEVICE SELECTOR
     vector <ofSerialDeviceInfo> devices = serial.getDeviceList();
@@ -53,7 +53,7 @@ ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor* parentNode)
     waveSelector->addItem("sine", 2);
     waveSelector->addItem("tri", 3);
     waveSelector->addItem("square", 4);
-    waveSelector->addItem("saw", 5);
+    waveSelector->addItem("saw 3", 5);
 
     waveSelector->setSelectedId(1, dontSendNotification);
     addAndMakeVisible(waveSelector.get());
