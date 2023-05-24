@@ -1,1 +1,5 @@
 .vs/ filter=lfs diff=lfs merge=lfs -text
+*.db filter=lfs diff=lfs merge=lfs -text
+*.ipch filter=lfs diff=lfs merge=lfs -text
+.vs/Stm32SignalGeneratorGUI/v17/Browse.VC.db filter=lfs diff=lfs merge=lfs -text
+.vs/Stm32SignalGeneratorGUI/v17/ipch/AutoPCH/e18db4158ddd0c2b/OPENEPHYSLIB.ipch filter=lfs diff=lfs merge=lfs -text
