@@ -67,16 +67,10 @@ ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor* parentNode)
 
 void ProcessorPluginEditor::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 {
-    if (comboBoxThatHasChanged == deviceSelector.get())
+    if (comboBoxThatHasChanged == waveSelector.get())
     {
         ProcessorPlugin* processor = (ProcessorPlugin*)getProcessor();
-        //processor->setDevice(deviceSelector->getText());
-        CoreServices::updateSignalChain(this);
-    }
-    else if (comboBoxThatHasChanged == waveSelector.get())
-    {
-        ProcessorPlugin* processor = (ProcessorPlugin*)getProcessor();
-        //processor->setDevice(deviceSelector->getText());
+        processor->connect(deviceSelector->getText().toStdString(), (char)waveSelector->getSelectedItemIndex()-1);
         CoreServices::updateSignalChain(this);
     }
 }

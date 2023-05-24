@@ -76,7 +76,7 @@ public:
 		Parameter objects*/
 	void loadCustomParametersFromXml(XmlElement* parentElement) override;
 
-	bool connect(string device, int baud = 115200);
+	bool connect(string device, char wave_type, int baud = 115200);
 	// opens a serial port connection to the arduino
 
 	void disconnect();
