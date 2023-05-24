@@ -24,8 +24,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PROCESSORPLUGINEDITOR_H_DEFINED
 
 #include <EditorHeaders.h>
+#include <SerialLib.h>
+#include "ProcessorPlugin.h"
 
-class ProcessorPluginEditor : public GenericEditor
+class ProcessorPluginEditor : public GenericEditor,
+							  public ComboBox::Listener
 {
 public:
 
@@ -35,10 +38,23 @@ public:
 	/** Destructor */
 	~ProcessorPluginEditor() { }
 
+	/** Called when selected device is changed.*/
+	void comboBoxChanged(ComboBox* comboBoxThatHasChanged);
+
+	/** Gets the latest device from the processor*/
+	void updateDevice(String deviceName);
+
 private:
+
+	ofSerial serial;
+
+	std::unique_ptr<ComboBox> deviceSelector;
+
+	std::unique_ptr<ComboBox> waveSelector;
 
 	/** Generates an assertion if this class leaks */
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ProcessorPluginEditor);
+
 };
 
 #endif // PROCESSORPLUGINEDITOR_H_DEFINED

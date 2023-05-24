@@ -24,17 +24,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ProcessorPluginEditor.h"
 
-
 ProcessorPlugin::ProcessorPlugin()
-    : GenericProcessor("Plugin Name")
+    : GenericProcessor("stm x fafa")
 {
+    //SerialPort port("COM8", 115200);
 
+    addIntParameter(Parameter::GLOBAL_SCOPE, "stim freq (Hz)", "The frequency of pulse light and sound stimulation", 1, 1, 255);
+    addIntParameter(Parameter::GLOBAL_SCOPE, "pitch (Hz)", "The pitch in Hz of sound ", 432, 1, 65535);
+    addIntParameter(Parameter::GLOBAL_SCOPE, "duty cycle", "Duty cycle of stimulation", 50, 0, 100);
 }
 
 
 ProcessorPlugin::~ProcessorPlugin()
 {
-
+    disconnect();
 }
 
 
@@ -47,7 +50,6 @@ AudioProcessorEditor* ProcessorPlugin::createEditor()
 
 void ProcessorPlugin::updateSettings()
 {
-
 
 }
 
@@ -87,4 +89,15 @@ void ProcessorPlugin::saveCustomParametersToXml(XmlElement* parentElement)
 void ProcessorPlugin::loadCustomParametersFromXml(XmlElement* parentElement)
 {
 
+}
+
+
+bool ProcessorPlugin::connect(string device, int baud) {
+    _port.enumerateDevices();
+    _port.setup(device.c_str(), baud);
+    return true;
+}
+
+void ProcessorPlugin::disconnect() {
+    _port.close();
 }

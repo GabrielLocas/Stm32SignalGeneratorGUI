@@ -25,6 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <ProcessorHeaders.h>
 
+#include <list>
+#include <vector>
+#include <string>
+#include <iostream>
+#include <SerialLib.h>
 
 class ProcessorPlugin : public GenericProcessor
 {
@@ -71,6 +76,14 @@ public:
 		Parameter objects*/
 	void loadCustomParametersFromXml(XmlElement* parentElement) override;
 
+	bool connect(string device, int baud = 115200);
+	// opens a serial port connection to the arduino
+
+	void disconnect();
+	// closes the serial port connection
+
+	//attributes
+	ofSerial _port;
 };
 
 #endif
