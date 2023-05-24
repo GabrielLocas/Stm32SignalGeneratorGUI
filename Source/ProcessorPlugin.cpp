@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ProcessorPluginEditor.h"
 
+
 ProcessorPlugin::ProcessorPlugin()
     : GenericProcessor("stm x fafa")
 {
@@ -50,6 +51,7 @@ AudioProcessorEditor* ProcessorPlugin::createEditor()
 
 void ProcessorPlugin::updateSettings()
 {
+
 
 }
 
