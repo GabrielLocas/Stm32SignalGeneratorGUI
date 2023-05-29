@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 ProcessorPlugin::ProcessorPlugin()
-    : GenericProcessor("stm xv fafa")
+    : GenericProcessor("stm xvi fafa")
 {
 
     addIntParameter(Parameter::GLOBAL_SCOPE, "stim freq (Hz)", "The frequency of pulse light and sound stimulation", 20, 1, 255);
@@ -93,28 +93,50 @@ void ProcessorPlugin::loadCustomParametersFromXml(XmlElement* parentElement)
 }
 
 
-bool ProcessorPlugin::connect(string device, char wave_type, int baud) {
+bool ProcessorPlugin::startSignal(string device, char wave_type, int baud) {
     _port.enumerateDevices();
     _port.setup(device.c_str(), baud);
 
     unsigned char sendArray[5];
 
     //wave type
-    //_port.writeByte(wave_type);
     sendArray[0] = wave_type;
 
     //pitch frequency
-    //_port.writeByte((int) getParameter("pitch (Hz)")->getValue());
     sendArray[2] = ((int)getParameter("pitch (Hz)")->getValue() & 0x000000ff);
     sendArray[1] = ((int)getParameter("pitch (Hz)")->getValue() & 0x0000ff00) >> 8;
 
     //stimulation frequency
-    //_port.writeByte((int)getParameter("stim freq (Hz)")->getValue());
     sendArray[3] = (int)getParameter("stim freq (Hz)")->getValue();
 
     //duty cycle
-    //_port.writeByte((int)getParameter("duty cycle")->getValue());
-    sendArray[4] = (int)((float)(getParameter("duty cycle")->getValue())*2.55);
+    if ((int)(getParameter("duty cycle")->getValue()) == 100) {
+        sendArray[4] = 0xFF;
+    }
+    else {
+        sendArray[4] = (int)((float)(getParameter("duty cycle")->getValue()) * 2.55);
+    }
+
+    _port.writeBytes(sendArray, 5);
+
+    _port.close();
+
+    return true;
+}
+
+bool ProcessorPlugin::stopSignal(string device, char wave_type, int baud) {
+    _port.enumerateDevices();
+    _port.setup(device.c_str(), baud);
+
+    unsigned char sendArray[5];
+
+    //Arbitrary values except the duty cycle of zero to cancel all stimulation
+    sendArray[0] = 0x01;
+    sendArray[2] = 0x00;
+    sendArray[1] = 0x10;
+    sendArray[3] = 0x10;
+    sendArray[4] = 0x00; //This one
+    
 
     _port.writeBytes(sendArray, 5);
 

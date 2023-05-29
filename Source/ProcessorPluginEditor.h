@@ -28,7 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ProcessorPlugin.h"
 
 class ProcessorPluginEditor : public GenericEditor,
-							  public ComboBox::Listener
+							  public ComboBox::Listener,
+							  public Button::Listener
 {
 public:
 
@@ -44,6 +45,9 @@ public:
 	/** Gets the latest device from the processor*/
 	void updateDevice(String deviceName);
 
+	/** Called when configure button is clicked */
+	void buttonClicked(Button* button) override;
+
 private:
 
 	ofSerial serial;
@@ -51,6 +55,10 @@ private:
 	std::unique_ptr<ComboBox> deviceSelector;
 
 	std::unique_ptr<ComboBox> waveSelector;
+
+	std::unique_ptr<UtilityButton> startButton;
+
+	std::unique_ptr<UtilityButton> stopButton;
 
 	/** Generates an assertion if this class leaks */
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ProcessorPluginEditor);

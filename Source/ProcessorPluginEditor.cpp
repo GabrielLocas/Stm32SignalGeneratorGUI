@@ -27,7 +27,7 @@ ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor* parentNode)
     : GenericEditor(parentNode)
 {
 
-    desiredWidth = 335;
+    desiredWidth = 400;
 
     //DEVICE SELECTOR
     vector <ofSerialDeviceInfo> devices = serial.getDeviceList();
@@ -63,15 +63,26 @@ ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor* parentNode)
     addTextBoxParameterEditor("pitch (Hz)", 144, 70);
     addSliderParameterEditor("duty cycle", 260, 40);
 
+    //START AND STOP BUTTONS
+    startButton = std::make_unique<UtilityButton>("START", titleFont);
+    startButton->addListener(this);
+    //startButton->setRadius(3.0f);
+    startButton->setBounds(350, 40, 50, 30);
+    addAndMakeVisible(startButton.get());
+
+    stopButton = std::make_unique<UtilityButton>("STOP", titleFont);
+    stopButton->addListener(this);
+    //stopButton->setRadius(3.0f);
+    stopButton->setBounds(350, 80, 50, 30);
+    addAndMakeVisible(stopButton.get());
+
 }
 
 void ProcessorPluginEditor::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 {
     if (comboBoxThatHasChanged == waveSelector.get())
     {
-        ProcessorPlugin* processor = (ProcessorPlugin*)getProcessor();
-        processor->connect(deviceSelector->getText().toStdString(), (char)waveSelector->getSelectedItemIndex()-1);
-        CoreServices::updateSignalChain(this);
+        
     }
 }
 
@@ -82,4 +93,22 @@ void ProcessorPluginEditor::updateDevice(String deviceName)
         if (deviceSelector->getItemText(i).equalsIgnoreCase(deviceName))
             deviceSelector->setSelectedId(deviceSelector->getItemId(i), dontSendNotification);
     }
+}
+
+void ProcessorPluginEditor::buttonClicked(Button* button)
+{
+
+    if (button == startButton.get())
+    {
+        ProcessorPlugin* processor = (ProcessorPlugin*)getProcessor();
+        processor->startSignal(deviceSelector->getText().toStdString(), (char)waveSelector->getSelectedItemIndex() - 1);
+        CoreServices::updateSignalChain(this);
+        //return;
+    }
+    else if (button == stopButton.get()) {
+        ProcessorPlugin* processor = (ProcessorPlugin*)getProcessor();
+        processor->stopSignal(deviceSelector->getText().toStdString(), (char)waveSelector->getSelectedItemIndex() - 1);
+        CoreServices::updateSignalChain(this);
+    }
+
 }
