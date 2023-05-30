@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 ProcessorPlugin::ProcessorPlugin()
-    : GenericProcessor("stm xvi fafa")
+    : GenericProcessor("stm32 - version 1.0")
 {
 
     addIntParameter(Parameter::GLOBAL_SCOPE, "stim freq (Hz)", "The frequency of pulse light and sound stimulation", 20, 1, 255);
@@ -97,7 +97,7 @@ bool ProcessorPlugin::startSignal(string device, char wave_type, int baud) {
     _port.enumerateDevices();
     _port.setup(device.c_str(), baud);
 
-    unsigned char sendArray[5];
+    unsigned char sendArray[PACKET_SIZE];
 
     //wave type
     sendArray[0] = wave_type;
@@ -117,7 +117,7 @@ bool ProcessorPlugin::startSignal(string device, char wave_type, int baud) {
         sendArray[4] = (int)((float)(getParameter("duty cycle")->getValue()) * 2.55);
     }
 
-    _port.writeBytes(sendArray, 5);
+    _port.writeBytes(sendArray, PACKET_SIZE);
 
     _port.close();
 
@@ -128,7 +128,7 @@ bool ProcessorPlugin::stopSignal(string device, char wave_type, int baud) {
     _port.enumerateDevices();
     _port.setup(device.c_str(), baud);
 
-    unsigned char sendArray[5];
+    unsigned char sendArray[PACKET_SIZE];
 
     //Arbitrary values except the duty cycle of zero to cancel all stimulation
     sendArray[0] = 0x01;
@@ -138,7 +138,7 @@ bool ProcessorPlugin::stopSignal(string device, char wave_type, int baud) {
     sendArray[4] = 0x00; //This one
     
 
-    _port.writeBytes(sendArray, 5);
+    _port.writeBytes(sendArray, PACKET_SIZE);
 
     _port.close();
 

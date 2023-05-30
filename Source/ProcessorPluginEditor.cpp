@@ -103,7 +103,6 @@ void ProcessorPluginEditor::buttonClicked(Button* button)
         ProcessorPlugin* processor = (ProcessorPlugin*)getProcessor();
         processor->startSignal(deviceSelector->getText().toStdString(), (char)waveSelector->getSelectedItemIndex() - 1);
         CoreServices::updateSignalChain(this);
-        //return;
     }
     else if (button == stopButton.get()) {
         ProcessorPlugin* processor = (ProcessorPlugin*)getProcessor();

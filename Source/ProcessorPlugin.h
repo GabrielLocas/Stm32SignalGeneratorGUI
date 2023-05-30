@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef PROCESSORPLUGIN_H_DEFINED
 #define PROCESSORPLUGIN_H_DEFINED
 
+#define PACKET_SIZE 5
+
 #include <ProcessorHeaders.h>
 
 #include <list>
@@ -77,10 +79,10 @@ public:
 	void loadCustomParametersFromXml(XmlElement* parentElement) override;
 
 	bool startSignal(string device, char wave_type, int baud = 115200);
-	// opens a serial port connection to the arduino
+	// sends the wanted signal to the stm32
 
 	bool stopSignal(string device, char wave_type, int baud = 115200);
-	// opens a serial port connection to the arduino
+	// sends a signal to stop the stimulation to the stm32
 
 	void disconnect();
 	// closes the serial port connection
