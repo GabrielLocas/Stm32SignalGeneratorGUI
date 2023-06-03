@@ -27,13 +27,13 @@ ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor* parentNode)
     : GenericEditor(parentNode)
 {
 
-    desiredWidth = 400;
+    desiredWidth = 380;
 
     //DEVICE SELECTOR
     vector <ofSerialDeviceInfo> devices = serial.getDeviceList();
 
     deviceSelector = std::make_unique<ComboBox>();
-    deviceSelector->setBounds(15, 50, 110, 20);
+    deviceSelector->setBounds(10, 40, 110, 20);
     deviceSelector->addListener(this);
     deviceSelector->addItem("Device", 1);
 
@@ -47,7 +47,7 @@ ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor* parentNode)
 
     //WAVE SELECTOR
     waveSelector = std::make_unique<ComboBox>();
-    waveSelector->setBounds(15, 90, 110, 20);
+    waveSelector->setBounds(10, 70, 110, 20);
     waveSelector->addListener(this);
     waveSelector->addItem("Wave form", 1);
     waveSelector->addItem("sine", 2);
@@ -59,21 +59,23 @@ ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor* parentNode)
     addAndMakeVisible(waveSelector.get());
 
     //OTHER PARAMETERS
-    addTextBoxParameterEditor("stim freq (Hz)", 144, 30);
-    addTextBoxParameterEditor("pitch (Hz)", 144, 70);
-    addSliderParameterEditor("duty cycle", 260, 40);
+    addTextBoxParameterEditor("pitch (Hz)", 10, 90);
+    addTextBoxParameterEditor("stim freq (Hz)", 125, 20);
+    addTextBoxParameterEditor("stim time (s)", 125, 55);
+    addTextBoxParameterEditor("rest time (s)", 125, 90);
+    addTextBoxParameterEditor("repetitions", 230, 20);
+    addSliderParameterEditor("duty cycle", 230, 70);
+    addTextBoxParameterEditor("random", 300, 90);
 
     //START AND STOP BUTTONS
     startButton = std::make_unique<UtilityButton>("START", titleFont);
     startButton->addListener(this);
-    //startButton->setRadius(3.0f);
-    startButton->setBounds(350, 40, 50, 30);
+    startButton->setBounds(330, 30, 50, 30);
     addAndMakeVisible(startButton.get());
 
     stopButton = std::make_unique<UtilityButton>("STOP", titleFont);
     stopButton->addListener(this);
-    //stopButton->setRadius(3.0f);
-    stopButton->setBounds(350, 80, 50, 30);
+    stopButton->setBounds(330, 60, 50, 30);
     addAndMakeVisible(stopButton.get());
 
 }
