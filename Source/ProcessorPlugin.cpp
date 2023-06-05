@@ -24,9 +24,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ProcessorPluginEditor.h"
 
+#include <stdio.h>
+
+bool signalActive = false;
 
 ProcessorPlugin::ProcessorPlugin()
-    : GenericProcessor("stm32 - version 2.0")
+    : GenericProcessor("stm32 - version 2.1")
 {
 
     addIntParameter(Parameter::GLOBAL_SCOPE, "stim freq (Hz)", "The frequency of pulse light and sound stimulation", 20, 1, 255);
@@ -35,7 +38,7 @@ ProcessorPlugin::ProcessorPlugin()
     addIntParameter(Parameter::GLOBAL_SCOPE, "stim time (s)", "The time that stimulation is on (seconds)", 5, 1, 3600); //Secondes ou minutes???
     addIntParameter(Parameter::GLOBAL_SCOPE, "rest time (s)", "The time that stimulation is off", 3, 0, 3600);
     addIntParameter(Parameter::GLOBAL_SCOPE, "repetitions", "The number of repetitions of Stim and Rest time", 3, 1, 100);
-    addIntParameter(Parameter::GLOBAL_SCOPE, "random", "The ", 0, 0, 100);
+    addBooleanParameter(Parameter::GLOBAL_SCOPE, "random", "Activation of random duty cycle", 0);
 }
 
 
@@ -96,8 +99,44 @@ void ProcessorPlugin::loadCustomParametersFromXml(XmlElement* parentElement)
 
 }
 
+bool ProcessorPlugin::startStimulationCycle(string device, char wave_type) {
 
-bool ProcessorPlugin::startSignal(string device, char wave_type, int baud) {
+    Time timer;
+    uint32 currentTime;
+    //Iterate for the number of desired cycles
+    LOGC("The stimulation starts now...");
+    signalActive = true;
+    for (int i = 0; i < (int)(getParameter("repetitions")->getValue()); i++) {
+        if(signalActive){
+            //Activate stimulation
+            LOGC("Activating signal");
+            sendStartSignal(device, wave_type);
+            currentTime = timer.getMillisecondCounter();
+            timer.waitForMillisecondCounter(currentTime + 1000 * (int)(getParameter("stim time (s)")->getValue()));
+
+            //Deactivate stimulation
+            LOGC("Deactivating signal");
+            sendStopSignal(device, wave_type);
+            currentTime = timer.getMillisecondCounter();
+            timer.waitForMillisecondCounter(currentTime + 1000 * (int)(getParameter("rest time (s)")->getValue()));
+        }
+        else {
+            break;
+        }
+    }
+    signalActive = false;
+    LOGC("... the simulation has stopped");
+    return true;
+}
+
+bool ProcessorPlugin::stopStimulationCycle(string device, char wave_type) {
+    signalActive = false;
+    sendStopSignal(device, wave_type);
+    return true;
+}
+
+bool ProcessorPlugin::sendStartSignal(string device, char wave_type, int baud) {
+    //Create connection
     _port.enumerateDevices();
     _port.setup(device.c_str(), baud);
 
@@ -121,6 +160,9 @@ bool ProcessorPlugin::startSignal(string device, char wave_type, int baud) {
         sendArray[4] = (int)((float)(getParameter("duty cycle")->getValue()) * 2.55);
     }
 
+    sendArray[5] = (int)(getParameter("random")->getValue());
+
+    //Send packet
     _port.writeBytes(sendArray, PACKET_SIZE);
 
     _port.close();
@@ -128,7 +170,8 @@ bool ProcessorPlugin::startSignal(string device, char wave_type, int baud) {
     return true;
 }
 
-bool ProcessorPlugin::stopSignal(string device, char wave_type, int baud) {
+bool ProcessorPlugin::sendStopSignal(string device, char wave_type, int baud) {
+    //Create connection
     _port.enumerateDevices();
     _port.setup(device.c_str(), baud);
 
@@ -140,8 +183,9 @@ bool ProcessorPlugin::stopSignal(string device, char wave_type, int baud) {
     sendArray[1] = 0x10;
     sendArray[3] = 0x10;
     sendArray[4] = 0x00; //This one
-    
+    sendArray[5] = 0x00;
 
+    //Send packet
     _port.writeBytes(sendArray, PACKET_SIZE);
 
     _port.close();

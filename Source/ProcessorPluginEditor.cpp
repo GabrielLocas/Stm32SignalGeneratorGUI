@@ -65,7 +65,7 @@ ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor* parentNode)
     addTextBoxParameterEditor("rest time (s)", 125, 90);
     addTextBoxParameterEditor("repetitions", 230, 20);
     addSliderParameterEditor("duty cycle", 230, 70);
-    addTextBoxParameterEditor("random", 300, 90);
+    addCheckBoxParameterEditor("random", 300, 90);
 
     //START AND STOP BUTTONS
     startButton = std::make_unique<UtilityButton>("START", titleFont);
@@ -103,12 +103,12 @@ void ProcessorPluginEditor::buttonClicked(Button* button)
     if (button == startButton.get())
     {
         ProcessorPlugin* processor = (ProcessorPlugin*)getProcessor();
-        processor->startSignal(deviceSelector->getText().toStdString(), (char)waveSelector->getSelectedItemIndex() - 1);
+        processor->startStimulationCycle(deviceSelector->getText().toStdString(), (char)waveSelector->getSelectedItemIndex() - 1);
         CoreServices::updateSignalChain(this);
     }
     else if (button == stopButton.get()) {
         ProcessorPlugin* processor = (ProcessorPlugin*)getProcessor();
-        processor->stopSignal(deviceSelector->getText().toStdString(), (char)waveSelector->getSelectedItemIndex() - 1);
+        processor->stopStimulationCycle(deviceSelector->getText().toStdString(), (char)waveSelector->getSelectedItemIndex() - 1);
         CoreServices::updateSignalChain(this);
     }
 

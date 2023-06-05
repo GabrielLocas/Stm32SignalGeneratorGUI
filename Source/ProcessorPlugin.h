@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef PROCESSORPLUGIN_H_DEFINED
 #define PROCESSORPLUGIN_H_DEFINED
 
-#define PACKET_SIZE 5
+#define PACKET_SIZE 6
 
 #include <ProcessorHeaders.h>
 
@@ -78,10 +78,14 @@ public:
 		Parameter objects*/
 	void loadCustomParametersFromXml(XmlElement* parentElement) override;
 
-	bool startSignal(string device, char wave_type, int baud = 115200);
+	bool startStimulationCycle(string device, char wave_type);
+
+	bool stopStimulationCycle(string device, char wave_type);
+
+	bool sendStartSignal(string device, char wave_type, int baud = 115200);
 	// sends the wanted signal to the stm32
 
-	bool stopSignal(string device, char wave_type, int baud = 115200);
+	bool sendStopSignal(string device, char wave_type, int baud = 115200);
 	// sends a signal to stop the stimulation to the stm32
 
 	void disconnect();
