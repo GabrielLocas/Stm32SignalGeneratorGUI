@@ -27,13 +27,15 @@ ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor* parentNode)
     : GenericEditor(parentNode)
 {
 
-    desiredWidth = 380;
+    desiredWidth = 410;
+
+    /////////////////////////////////////////////////////////
 
     //DEVICE SELECTOR
     vector <ofSerialDeviceInfo> devices = serial.getDeviceList();
 
     deviceSelector = std::make_unique<ComboBox>();
-    deviceSelector->setBounds(10, 40, 110, 20);
+    deviceSelector->setBounds(5, 40, 110, 20);
     deviceSelector->addListener(this);
     deviceSelector->addItem("Device", 1);
 
@@ -45,39 +47,53 @@ ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor* parentNode)
     deviceSelector->setSelectedId(1, dontSendNotification);
     addAndMakeVisible(deviceSelector.get());
 
+    //START AND STOP BUTTONS
+    startButton = std::make_unique<UtilityButton>("START", titleFont);
+    startButton->addListener(this);
+    startButton->setBounds(5, 65, 50, 30);
+    addAndMakeVisible(startButton.get());
+
+    stopButton = std::make_unique<UtilityButton>("STOP", titleFont);
+    stopButton->addListener(this);
+    stopButton->setBounds(5, 95, 50, 30);
+    addAndMakeVisible(stopButton.get());
+
+    //Random checkbox
+    addCheckBoxParameterEditor("random", 55, 65);
+
+    /////////////////////////////////////////////////////////////
+
+    //TIME PARAMETERS
+    addTextBoxParameterEditor("stim time (s)", 120, 20); // 125 20
+    addTextBoxParameterEditor("rest time (s)", 120, 55); // 125 55
+    addTextBoxParameterEditor("repetitions", 120, 90); // 125 90
+
+    /////////////////////////////////////////////////////////////
+
+    //SOUND PARAMETERS
+
     //WAVE SELECTOR
     waveSelector = std::make_unique<ComboBox>();
-    waveSelector->setBounds(10, 70, 110, 20);
+    waveSelector->setBounds(220, 35, 80, 20); // 230 20
     waveSelector->addListener(this);
     waveSelector->addItem("Wave form", 1);
     waveSelector->addItem("sine", 2);
     waveSelector->addItem("tri", 3);
     waveSelector->addItem("square", 4);
     waveSelector->addItem("saw 3", 5);
-
     waveSelector->setSelectedId(1, dontSendNotification);
     addAndMakeVisible(waveSelector.get());
 
-    //OTHER PARAMETERS
-    addTextBoxParameterEditor("pitch (Hz)", 10, 90);
-    addTextBoxParameterEditor("stim freq (Hz)", 125, 20);
-    addTextBoxParameterEditor("stim time (s)", 125, 55);
-    addTextBoxParameterEditor("rest time (s)", 125, 90);
-    addTextBoxParameterEditor("repetitions", 230, 20);
-    addSliderParameterEditor("duty cycle", 230, 70);
-    addCheckBoxParameterEditor("random", 300, 90);
+    addTextBoxParameterEditor("pitch (Hz)", 220, 55);
+    addTextBoxParameterEditor("volume (%)", 220, 90);
 
-    //START AND STOP BUTTONS
-    startButton = std::make_unique<UtilityButton>("START", titleFont);
-    startButton->addListener(this);
-    startButton->setBounds(330, 30, 50, 30);
-    addAndMakeVisible(startButton.get());
+    /////////////////////////////////////////////////////////////
 
-    stopButton = std::make_unique<UtilityButton>("STOP", titleFont);
-    stopButton->addListener(this);
-    stopButton->setBounds(330, 60, 50, 30);
-    addAndMakeVisible(stopButton.get());
+    //LIGHT PARAMETERS
 
+    addTextBoxParameterEditor("stim freq (Hz)", 310, 20);
+    addTextBoxParameterEditor("duty cycle", 310, 55);
+    addTextBoxParameterEditor("light (%)", 310, 90);
 }
 
 void ProcessorPluginEditor::comboBoxChanged(ComboBox* comboBoxThatHasChanged)

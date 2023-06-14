@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 bool signalActive = false;
 
 ProcessorPlugin::ProcessorPlugin()
-    : GenericProcessor("stm32 - version 2.1")
+    : GenericProcessor("stm32 - version 3.0")
 {
 
     addIntParameter(Parameter::GLOBAL_SCOPE, "stim freq (Hz)", "The frequency of pulse light and sound stimulation", 20, 1, 255);
@@ -39,6 +39,8 @@ ProcessorPlugin::ProcessorPlugin()
     addIntParameter(Parameter::GLOBAL_SCOPE, "rest time (s)", "The time that stimulation is off", 3, 0, 3600);
     addIntParameter(Parameter::GLOBAL_SCOPE, "repetitions", "The number of repetitions of Stim and Rest time", 3, 1, 100);
     addBooleanParameter(Parameter::GLOBAL_SCOPE, "random", "Activation of random duty cycle", 0);
+    addIntParameter(Parameter::GLOBAL_SCOPE, "volume (%)", "Intensity of the sound in percentage", 100, 0, 100);
+    addIntParameter(Parameter::GLOBAL_SCOPE, "light (%)", "Intensity of the light in percentage", 100, 0, 100);
 }
 
 
@@ -161,6 +163,22 @@ bool ProcessorPlugin::sendStartSignal(string device, char wave_type, int baud) {
     }
 
     sendArray[5] = (int)(getParameter("random")->getValue());
+
+    //sound intensity
+    if ((int)(getParameter("volume (%)")->getValue()) == 100) {
+        sendArray[4] = 0x3F;
+    }
+    else {
+        sendArray[4] = (int)((float)(getParameter("volume (%)")->getValue()) * 0.63);
+    }
+
+    //light intensity
+    if ((int)(getParameter("light (%)")->getValue()) == 100) {
+        sendArray[4] = 0xFF;
+    }
+    else {
+        sendArray[4] = (int)((float)(getParameter("light (%)")->getValue()) * 2.55);
+    }
 
     //Send packet
     _port.writeBytes(sendArray, PACKET_SIZE);
