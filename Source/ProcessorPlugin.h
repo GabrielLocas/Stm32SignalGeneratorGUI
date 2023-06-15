@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef PROCESSORPLUGIN_H_DEFINED
 #define PROCESSORPLUGIN_H_DEFINED
 
-#define PACKET_SIZE 6
+#define PACKET_SIZE 8
 
 #include <ProcessorHeaders.h>
 

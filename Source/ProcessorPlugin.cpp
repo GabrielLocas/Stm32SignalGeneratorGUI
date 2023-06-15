@@ -166,18 +166,18 @@ bool ProcessorPlugin::sendStartSignal(string device, char wave_type, int baud) {
 
     //sound intensity
     if ((int)(getParameter("volume (%)")->getValue()) == 100) {
-        sendArray[4] = 0x3F;
+        sendArray[6] = 0x3F;
     }
     else {
-        sendArray[4] = (int)((float)(getParameter("volume (%)")->getValue()) * 0.63);
+        sendArray[6] = (int)((float)(getParameter("volume (%)")->getValue()) * 0.63);
     }
 
     //light intensity
     if ((int)(getParameter("light (%)")->getValue()) == 100) {
-        sendArray[4] = 0xFF;
+        sendArray[7] = 0xFF;
     }
     else {
-        sendArray[4] = (int)((float)(getParameter("light (%)")->getValue()) * 2.55);
+        sendArray[7] = (int)((float)(getParameter("light (%)")->getValue()) * 2.55);
     }
 
     //Send packet
