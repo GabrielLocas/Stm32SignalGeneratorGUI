@@ -78,21 +78,35 @@ public:
 		Parameter objects*/
 	void loadCustomParametersFromXml(XmlElement* parentElement) override;
 
-	bool startStimulationCycle(string device, char wave_type);
+	class StimulationThread : public juce::Thread {
+	public:
+		StimulationThread() : juce::Thread("Stimulation Thread") {
 
-	bool stopStimulationCycle(string device, char wave_type);
+		}
+		void run() override {
+			startStimulationCycle(device, wave_type);
+			signalThreadShouldExit();
+		}
+		bool startStimulationCycle(string device, char wave_type);
 
-	bool sendStartSignal(string device, char wave_type, int baud = 115200);
-	// sends the wanted signal to the stm32
+		bool stopStimulationCycle(string device, char wave_type);
 
-	bool sendStopSignal(string device, char wave_type, int baud = 115200);
-	// sends a signal to stop the stimulation to the stm32
+		bool sendStartSignal(string device, char wave_type, int baud = 115200);
+		// sends the wanted signal to the stm32
 
-	void disconnect();
-	// closes the serial port connection
+		bool sendStopSignal(string device, char wave_type, int baud = 115200);
+		// sends a signal to stop the stimulation to the stm32
 
-	//attributes
-	ofSerial _port;
+		void disconnect();
+		// closes the serial port connection
+
+		char wave_type = 0;
+		string device = " ";
+		//attributes
+		ofSerial _port;
+	};
+
+	StimulationThread stimThread;
 };
 
 #endif
