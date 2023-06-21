@@ -143,6 +143,9 @@ bool ProcessorPlugin::StimulationThread::sendStartSignal(string device, char wav
     unsigned char sendArray[PACKET_SIZE];
 
     //wave type
+    if (wave_type != 0 && wave_type != 1 && wave_type != 2 && wave_type != 3) {
+        wave_type = 0;
+    }
     sendArray[0] = wave_type;
 
     //pitch frequency
