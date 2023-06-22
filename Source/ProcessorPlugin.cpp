@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 bool signalActive = false;
 
 ProcessorPlugin::ProcessorPlugin()
-    : GenericProcessor("stm32 - version 3.3")
+    : GenericProcessor("LCU V1.0")
 {
 
     addIntParameter(Parameter::GLOBAL_SCOPE, "stim freq (Hz)", "The frequency of pulse light and sound stimulation", 20, 1, 255);
