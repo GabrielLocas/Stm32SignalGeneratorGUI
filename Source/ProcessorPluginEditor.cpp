@@ -66,8 +66,8 @@ ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor* parentNode)
     //==============================================================================
 
     // TIME PARAMETERS
-    addTextBoxParameterEditor("stim time (s)", 120, 20); // 125 20
-    addTextBoxParameterEditor("rest time (s)", 120, 55); // 125 55
+    addTextBoxParameterEditor("stim_time_s", 120, 20); // 125 20
+    addTextBoxParameterEditor("rest_time_s", 120, 55); // 125 55
     addTextBoxParameterEditor("repetitions", 120, 90); // 125 90
 
     //==============================================================================
@@ -78,23 +78,23 @@ ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor* parentNode)
     waveSelector = std::make_unique<ComboBox>();
     waveSelector->setBounds(220, 35, 80, 20); // 230 20
     waveSelector->addListener(this);
-    waveSelector->addItem("Wave form", 1);
+    waveSelector->addItem("Wave_form", 1);
     waveSelector->addItem("sine", 2);
     waveSelector->addItem("tri", 3);
     waveSelector->addItem("square", 4);
-    waveSelector->addItem("saw 3", 5);
+    waveSelector->addItem("saw", 5);
     waveSelector->setSelectedId(1, dontSendNotification);
     addAndMakeVisible(waveSelector.get());
 
-    addTextBoxParameterEditor("pitch (Hz)", 220, 55);
-    addTextBoxParameterEditor("volume (%)", 220, 90);
+    addTextBoxParameterEditor("pitch_Hz", 220, 55);
+    addTextBoxParameterEditor("volume", 220, 90);
 
     //==============================================================================
 
     // LIGHT PARAMETERS
-    addTextBoxParameterEditor("stim freq (Hz)", 310, 20);
-    addTextBoxParameterEditor("duty cycle", 310, 55);
-    addTextBoxParameterEditor("light (%)", 310, 90);
+    addTextBoxParameterEditor("stim_freq_Hz", 310, 20);
+    addTextBoxParameterEditor("duty_cycle", 310, 55);
+    addTextBoxParameterEditor("light", 310, 90);
 }
 
 void ProcessorPluginEditor::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
