@@ -57,7 +57,7 @@ extern "C" EXPORT int getPluginInfo(int index, Plugin::PluginInfo* info)
 		info->type = Plugin::Type::PROCESSOR;
 
 		//Processor name
-		info->processor.name = "Lightcore Ultra"; //Processor name shown in the GUI
+		info->processor.name = "Lightcore Tone Generator"; //Processor name shown in the GUI
 
 		//Type of processor. Can be FILTER, SOURCE, SINK or UTILITY. Specifies where on the processor list will appear
 		info->processor.type = Processor::Type::SINK;
