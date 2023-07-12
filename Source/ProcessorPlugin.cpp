@@ -32,15 +32,15 @@ ProcessorPlugin::ProcessorPlugin()
     : GenericProcessor("Lightcore Tone Generator")
 {
 
-    addIntParameter(Parameter::STREAM_SCOPE, "stim_freq_Hz", "The frequency of pulse light and sound stimulation", 20, 1, 255);
-    addIntParameter(Parameter::STREAM_SCOPE, "pitch_Hz", "The pitch in Hz of sound ", 10000, 1, 65535);
-    addIntParameter(Parameter::STREAM_SCOPE, "duty_cycle", "Duty cycle of stimulation", 50, 0, 100);
-    addIntParameter(Parameter::STREAM_SCOPE, "stim_time_s", "The time that stimulation is on (seconds)", 5, 1, 3600);
-    addIntParameter(Parameter::STREAM_SCOPE, "rest_time_s", "The time that stimulation is off", 3, 0, 3600);
-    addIntParameter(Parameter::STREAM_SCOPE, "repetitions", "The number of repetitions of Stim and Rest time", 3, 1, 100);
-    addBooleanParameter(Parameter::STREAM_SCOPE, "random", "Activation of random duty cycle", 0);
-    addIntParameter(Parameter::STREAM_SCOPE, "volume", "Intensity of the sound in percentage", 100, 0, 100);
-    addIntParameter(Parameter::STREAM_SCOPE, "light", "Intensity of the light in percentage", 100, 0, 100);
+    addIntParameter(Parameter::GLOBAL_SCOPE, "stim_freq_Hz", "The frequency of pulse light and sound stimulation", 20, 1, 255);
+    addIntParameter(Parameter::GLOBAL_SCOPE, "pitch_Hz", "The pitch in Hz of sound ", 10000, 1, 65535);
+    addIntParameter(Parameter::GLOBAL_SCOPE, "duty_cycle", "Duty cycle of stimulation", 50, 0, 100);
+    addIntParameter(Parameter::GLOBAL_SCOPE, "stim_time_s", "The time that stimulation is on (seconds)", 5, 1, 3600);
+    addIntParameter(Parameter::GLOBAL_SCOPE, "rest_time_s", "The time that stimulation is off", 3, 0, 3600);
+    addIntParameter(Parameter::GLOBAL_SCOPE, "repetitions", "The number of repetitions of Stim and Rest time", 3, 1, 100);
+    addBooleanParameter(Parameter::GLOBAL_SCOPE, "random", "Activation of random duty cycle", 0);
+    addIntParameter(Parameter::GLOBAL_SCOPE, "volume", "Intensity of the sound in percentage", 100, 0, 100);
+    addIntParameter(Parameter::GLOBAL_SCOPE, "light", "Intensity of the light in percentage", 100, 0, 100);
 }
 
 
