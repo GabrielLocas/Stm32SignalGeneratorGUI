@@ -33,17 +33,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <SerialLib.h>
 
-class ProcessorPlugin : public GenericProcessor
+class LtGen : public GenericProcessor
 {
 public:
 	/** The class constructor, used to initialize any members. */
-	ProcessorPlugin();
+	LtGen();
 
 	/** The class destructor, used to deallocate memory */
-	~ProcessorPlugin();
+	~LtGen();
 
 	/** If the processor has a custom editor, this method must be defined to instantiate it. */
 	AudioProcessorEditor* createEditor() override;
+
+	/** Called whenever a parameter's value is changed (called by GenericProcessor::setParameter())*/
+	void parameterValueChanged(Parameter* param) override;
 
 	/** Called every time the settings of an upstream plugin are changed.
 		Allows the processor to handle variations in the channel configuration or any other parameter
@@ -80,33 +83,38 @@ public:
 
 	class StimulationThread : public juce::Thread {
 	public:
-		StimulationThread() : juce::Thread("Stimulation Thread") {
-
-		}
+		StimulationThread(LtGen& x) : juce::Thread("Stimulation Thread"), parent(x) {}
 		void run() override {
-			startStimulationCycle(device, wave_type);
+			parent.startStimulationCycle(parent.device, parent.wave_type);
 			signalThreadShouldExit();
 		}
-		bool startStimulationCycle(string device, char wave_type);
+	private:
+		LtGen& parent;
 
-		bool stopStimulationCycle(string device, char wave_type);
-
-		bool sendStartSignal(string device, char wave_type, int baud = 115200);
-		// sends the wanted signal to the stm32
-
-		bool sendStopSignal(string device, char wave_type, int baud = 115200);
-		// sends a signal to stop the stimulation to the stm32
-
-		void disconnect();
-		// closes the serial port connection
-
-		char wave_type = 0;
-		string device = " ";
-		//attributes
-		ofSerial _port;
 	};
 
+	bool startStimulationCycle(string device, char wave_type);
+
+	bool stopStimulationCycle(string device);
+
+	bool sendStartSignal(string device, char wave_type, int baud = 115200);
+	// sends the wanted signal to the stm32
+
+	bool sendStopSignal(string device, int baud = 115200);
+	// sends a signal to stop the stimulation to the stm32
+
+	void disconnect();
+	// closes the serial port connection
+
+	char wave_type = 0;
+	string device = " ";
+	//attributes
+	ofSerial _port;
+
 	StimulationThread stimThread;
+
+private:
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LtGen);
 };
 
 #endif

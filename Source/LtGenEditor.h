@@ -25,19 +25,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <EditorHeaders.h>
 #include <SerialLib.h>
-#include "ProcessorPlugin.h"
+#include "LtGen.h"
 
-class ProcessorPluginEditor : public GenericEditor,
+class LtGenEditor : public GenericEditor,
 							  public ComboBox::Listener,
 							  public Button::Listener
 {
 public:
 
 	/** Constructor */
-	ProcessorPluginEditor(GenericProcessor* parentNode);
+	LtGenEditor(GenericProcessor* parentNode);
 
 	/** Destructor */
-	~ProcessorPluginEditor() { }
+	~LtGenEditor() { }
 
 	/** Called when selected device is changed.*/
 	void comboBoxChanged(ComboBox* comboBoxThatHasChanged);
@@ -60,8 +60,28 @@ private:
 
 	std::unique_ptr<UtilityButton> stopButton;
 
+	ScopedPointer<Label> stimFreqLabel;
+	ScopedPointer<Label> stimFreqEditLabel;
+	ScopedPointer<Label> pitchLabel;
+	ScopedPointer<Label> pitchEditLabel;
+	ScopedPointer<Label> dutyCycleLabel;
+	ScopedPointer<Label> dutyCycleEditLabel;
+	ScopedPointer<Label> stimTimeLabel;
+	ScopedPointer<Label> stimTimeEditLabel;
+	ScopedPointer<Label> restTimeLabel;
+	ScopedPointer<Label> restTimeEditLabel;
+	ScopedPointer<Label> repetitionsLabel;
+	ScopedPointer<Label> repetitionsEditLabel;
+	ScopedPointer<Label> randomLabel;
+	ScopedPointer<Label> randomEditLabel;
+	ScopedPointer<Label> volumeLabel;
+	ScopedPointer<Label> volumeEditLabel;
+	ScopedPointer<Label> lightLabel;
+	ScopedPointer<Label> lightEditLabel;
+
+
 	/** Generates an assertion if this class leaks */
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ProcessorPluginEditor);
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LtGenEditor);
 
 };
 

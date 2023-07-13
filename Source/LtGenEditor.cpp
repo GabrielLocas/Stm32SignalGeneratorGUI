@@ -20,12 +20,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ProcessorPluginEditor.h"
+#include "LtGenEditor.h"
 #include <stdio.h>
 
 //std::thread stimThread;
 
-ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor* parentNode) 
+LtGenEditor::LtGenEditor(GenericProcessor* parentNode)
     : GenericEditor(parentNode)
 {
 
@@ -97,21 +97,21 @@ ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor* parentNode)
     addTextBoxParameterEditor("light", 310, 90);
 }
 
-void ProcessorPluginEditor::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
+void LtGenEditor::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 {
     if (comboBoxThatHasChanged == waveSelector.get())
     {
-        ProcessorPlugin* processor = (ProcessorPlugin*)getProcessor();
-        processor->stimThread.wave_type = (char)waveSelector->getSelectedItemIndex() - 1;
+        LtGen* processor = (LtGen*)getProcessor();
+        processor->wave_type = (char)waveSelector->getSelectedItemIndex() - 1;
     }
     if (comboBoxThatHasChanged == deviceSelector.get())
     {
-        ProcessorPlugin* processor = (ProcessorPlugin*)getProcessor();
-        processor->stimThread.device = deviceSelector->getText().toStdString();
+        LtGen* processor = (LtGen*)getProcessor();
+        processor->device = deviceSelector->getText().toStdString();
     }
 }
 
-void ProcessorPluginEditor::updateDevice(String deviceName)
+void LtGenEditor::updateDevice(String deviceName)
 {
     for (int i = 0; i < deviceSelector->getNumItems(); i++)
     {
@@ -120,18 +120,18 @@ void ProcessorPluginEditor::updateDevice(String deviceName)
     }
 }
 
-void ProcessorPluginEditor::buttonClicked(Button* button)
+void LtGenEditor::buttonClicked(Button* button)
 {
-    ProcessorPlugin* processor = (ProcessorPlugin*)getProcessor();
+    LtGen* processor = (LtGen*)getProcessor();
     if (button == startButton.get())
     {
         processor->stimThread.startThread();
-        CoreServices::updateSignalChain(this);
     }
     else if (button == stopButton.get()) {
-        processor->stimThread.stopThread(100);
-        processor->stimThread.stopStimulationCycle(deviceSelector->getText().toStdString(), (char)waveSelector->getSelectedItemIndex() - 1);
-        CoreServices::updateSignalChain(this);
+        //processor->stimThread.stopThread(100);
+        processor->stimThread.signalThreadShouldExit();
+        processor->stopStimulationCycle(deviceSelector->getText().toStdString());
     }
+    CoreServices::updateSignalChain(this);
 
 }

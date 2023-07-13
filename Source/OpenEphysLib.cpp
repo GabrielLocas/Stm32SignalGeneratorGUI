@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <PluginInfo.h>
 
-#include "ProcessorPlugin.h"
+#include "LtGen.h"
 #include <string>
 
 #ifdef WIN32
@@ -63,7 +63,7 @@ extern "C" EXPORT int getPluginInfo(int index, Plugin::PluginInfo* info)
 		info->processor.type = Processor::Type::SINK;
 
 		//Class factory pointer. Replace "ProcessorPluginSpace::ProcessorPlugin" with the namespace and class name.
-		info->processor.creator = &(Plugin::createProcessor<ProcessorPlugin>);
+		info->processor.creator = &(Plugin::createProcessor<LtGen>);
 		break;
 	default:
 		return -1;

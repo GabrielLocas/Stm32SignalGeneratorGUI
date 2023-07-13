@@ -20,16 +20,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ProcessorPlugin.h"
+#include "LtGen.h"
 
-#include "ProcessorPluginEditor.h"
+#include "LtGenEditor.h"
 
 #include <stdio.h>
 
-bool signalActive = false;
+static bool signalActive = false;
+static unsigned char sendArray[PACKET_SIZE];
 
-ProcessorPlugin::ProcessorPlugin()
-    : GenericProcessor("Lightcore Tone Generator")
+LtGen::LtGen()
+    : GenericProcessor("Lightcore Tone Generator"), stimThread(*this)
 {
 
     addIntParameter(Parameter::GLOBAL_SCOPE, "stim_freq_Hz", "The frequency of pulse light and sound stimulation", 20, 1, 255);
@@ -43,80 +44,82 @@ ProcessorPlugin::ProcessorPlugin()
     addIntParameter(Parameter::GLOBAL_SCOPE, "light", "Intensity of the light in percentage", 100, 0, 100);
 }
 
-
-ProcessorPlugin::~ProcessorPlugin()
+LtGen::~LtGen()
 {
-    stimThread.disconnect();
+    disconnect();
     stimThread.stopThread(1000);
 }
 
 
-AudioProcessorEditor* ProcessorPlugin::createEditor()
+AudioProcessorEditor* LtGen::createEditor()
 {
-    editor = std::make_unique<ProcessorPluginEditor>(this);
+    editor = std::make_unique<LtGenEditor>(this);
     return editor.get();
 }
 
+void LtGen::parameterValueChanged(Parameter* param)
+{
+    
+}
 
-void ProcessorPlugin::updateSettings()
+void LtGen::updateSettings()
 {
 
 
 }
 
 
-void ProcessorPlugin::process(AudioBuffer<float>& buffer)
+void LtGen::process(AudioBuffer<float>& buffer)
 {
-
-    checkForEvents(true);
-
+    checkForEvents();
 }
 
 
-void ProcessorPlugin::handleTTLEvent(TTLEventPtr event)
-{
-
-}
-
-
-void ProcessorPlugin::handleSpike(SpikePtr spike)
+void LtGen::handleTTLEvent(TTLEventPtr event)
 {
 
 }
 
 
-void ProcessorPlugin::handleBroadcastMessage(String message)
+void LtGen::handleSpike(SpikePtr spike)
 {
 
 }
 
 
-void ProcessorPlugin::saveCustomParametersToXml(XmlElement* parentElement)
+void LtGen::handleBroadcastMessage(String message)
 {
 
 }
 
 
-void ProcessorPlugin::loadCustomParametersFromXml(XmlElement* parentElement)
+void LtGen::saveCustomParametersToXml(XmlElement* parentElement)
 {
 
 }
-bool ProcessorPlugin::StimulationThread::startStimulationCycle(string device, char wave_type) {
+
+
+void LtGen::loadCustomParametersFromXml(XmlElement* parentElement)
+{
+
+}
+
+bool LtGen::startStimulationCycle(string device, char wave_type) {
 
     //Iterate for the number of desired cycles
     LOGC("The stimulation starts now...");
     signalActive = true;
-    for (int i = 0; i < (int)(ProcessorPlugin().getParameter("repetitions")->getValue()); i++) {
+    for (int i = 0; i < (int)(getParameter("repetitions")->getValue()); i++) {
         if(signalActive){
             //Activate stimulation
             LOGC("Activating signal");
             sendStartSignal(device, wave_type);
-            Thread::sleep(1000 * (int)(ProcessorPlugin().getParameter("stim_time_s")->getValue()));
+            Thread::sleep(1000 * (int)(getParameter("stim_time_s")->getValue()));
 
             //Deactivate stimulation
             LOGC("Deactivating signal");
             sendStopSignal(device, wave_type);
-            Thread::sleep(1000 * (int)(ProcessorPlugin().getParameter("rest_time_s")->getValue()));
+            Thread::sleep(1000 * (int)(getParameter("rest_time_s")->getValue()));
         }
         else {
             break;
@@ -127,7 +130,7 @@ bool ProcessorPlugin::StimulationThread::startStimulationCycle(string device, ch
     return true;
 }
 
-bool ProcessorPlugin::StimulationThread::stopStimulationCycle(string device, char wave_type) {
+bool LtGen::stopStimulationCycle(string device) {
     LOGC("Stop has been pressed");
     signalActive = false;
     sendStopSignal(device, wave_type);
@@ -135,12 +138,12 @@ bool ProcessorPlugin::StimulationThread::stopStimulationCycle(string device, cha
     return true;
 }
 
-bool ProcessorPlugin::StimulationThread::sendStartSignal(string device, char wave_type, int baud) {
+bool LtGen::sendStartSignal(string device, char wave_type, int baud) {
     //Create connection
     _port.enumerateDevices();
     _port.setup(device.c_str(), baud);
 
-    unsigned char sendArray[PACKET_SIZE];
+    //unsigned char sendArray[PACKET_SIZE];
 
     //wave type
     if (wave_type != 0 && wave_type != 1 && wave_type != 2 && wave_type != 3) {
@@ -149,36 +152,36 @@ bool ProcessorPlugin::StimulationThread::sendStartSignal(string device, char wav
     sendArray[0] = wave_type;
 
     //pitch frequency
-    sendArray[2] = ((int)ProcessorPlugin().getParameter("pitch_Hz")->getValue() & 0x000000ff);
-    sendArray[1] = ((int)ProcessorPlugin().getParameter("pitch_Hz")->getValue() & 0x0000ff00) >> 8;
+    sendArray[2] = ((int)getParameter("pitch_Hz")->getValue() & 0x000000ff);
+    sendArray[1] = ((int)getParameter("pitch_Hz")->getValue() & 0x0000ff00) >> 8;
 
     //stimulation frequency
-    sendArray[3] = (int)ProcessorPlugin().getParameter("stim_freq_Hz")->getValue();
+    sendArray[3] = (int)getParameter("stim_freq_Hz")->getValue();
 
     //duty cycle
-    if ((int)(ProcessorPlugin().getParameter("duty_cycle")->getValue()) == 100) {
+    if ((int)(LtGen().getParameter("duty_cycle")->getValue()) == 100) {
         sendArray[4] = 0xFF;
     }
     else {
-        sendArray[4] = (int)((float)(ProcessorPlugin().getParameter("duty_cycle")->getValue()) * 2.55);
+        sendArray[4] = (int)((float)(getParameter("duty_cycle")->getValue()) * 2.55);
     }
 
-    sendArray[5] = (int)(ProcessorPlugin().getParameter("random")->getValue());
+    sendArray[5] = (int)(getParameter("random")->getValue());
 
     //sound intensity
-    if ((int)(ProcessorPlugin().getParameter("volume")->getValue()) == 100) {
+    if ((int)(getParameter("volume")->getValue()) == 100) {
         sendArray[6] = 0x3F;
     }
     else {
-        sendArray[6] = (int)((float)(ProcessorPlugin().getParameter("volume")->getValue()) * 0.63);
+        sendArray[6] = (int)((float)(getParameter("volume")->getValue()) * 0.63);
     }
 
     //light intensity
-    if ((int)(ProcessorPlugin().getParameter("light")->getValue()) == 100) {
+    if ((int)(getParameter("light")->getValue()) == 100) {
         sendArray[7] = 0xFF;
     }
     else {
-        sendArray[7] = (int)((float)(ProcessorPlugin().getParameter("light")->getValue()) * 2.55);
+        sendArray[7] = (int)((float)(getParameter("light")->getValue()) * 2.55);
     }
 
     //Send packet
@@ -189,12 +192,12 @@ bool ProcessorPlugin::StimulationThread::sendStartSignal(string device, char wav
     return true;
 }
 
-bool ProcessorPlugin::StimulationThread::sendStopSignal(string device, char wave_type, int baud) {
+bool LtGen::sendStopSignal(string device, int baud) {
     //Create connection
     _port.enumerateDevices();
     _port.setup(device.c_str(), baud);
 
-    unsigned char sendArray[PACKET_SIZE];
+    //unsigned char sendArray[PACKET_SIZE];
 
     //Arbitrary values except the duty cycle of zero to cancel all stimulation
     sendArray[0] = 0x01;
@@ -214,6 +217,6 @@ bool ProcessorPlugin::StimulationThread::sendStopSignal(string device, char wave
     return true;
 }
 
-void ProcessorPlugin::StimulationThread::disconnect() {
+void LtGen::disconnect() {
     _port.close();
 }
