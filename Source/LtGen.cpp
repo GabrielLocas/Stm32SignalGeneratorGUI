@@ -40,7 +40,7 @@ LtGen::LtGen()
     addIntParameter(Parameter::GLOBAL_SCOPE, "rest_time_s", "The time that stimulation is off", 3, 0, 3600);
     addIntParameter(Parameter::GLOBAL_SCOPE, "repetitions", "The number of repetitions of Stim and Rest time", 3, 1, 100);
     addBooleanParameter(Parameter::GLOBAL_SCOPE, "random", "Activation of random duty cycle", 0);
-    addIntParameter(Parameter::GLOBAL_SCOPE, "volume", "Intensity of the sound in percentage", 100, 0, 100);
+    addIntParameter(Parameter::GLOBAL_SCOPE, "volume", "Intensity of the sound in percentage", 50, 0, 100);
     addIntParameter(Parameter::GLOBAL_SCOPE, "light", "Intensity of the light in percentage", 100, 0, 100);
 }
 
